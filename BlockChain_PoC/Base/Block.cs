@@ -10,9 +10,9 @@ namespace BlockChain_PoC.Base
 {
     internal record Block
     {
-        const int Difficulty = 3;
-        public byte[] Data { get; init; }
-        public DateTime CreatedOn { get; init; } = DateTime.Now;
+        const int Difficulty = 2;
+        public IEnumerable<Transaction> Transactions { get; init; }
+        public DateTime CreatedOn { get; init; } = DateTime.UtcNow;
         public byte[] Nonce
         {
             get
@@ -48,17 +48,15 @@ namespace BlockChain_PoC.Base
                 hash = CreateHash();
             }
         }
-        public static Block CreateBlock<T>(T data, byte[] previousHash = null, DateTime? dateTime = null)
+        public static Block CreateBlock(IEnumerable<Transaction> transactions, byte[] previousHash = null, DateTime? dateTime = null)
         {
-            var serializedBytes = MessagePack.MessagePackSerializer.Serialize<T>(data);
-
-            var block = new Block(serializedBytes, previousHash, dateTime);
+            var block = new Block(transactions, previousHash, dateTime);
 
             return block;
         }
-        public Block(byte[] data, byte[] previousHash = null, DateTime? dateTime = null)
+        public Block(IEnumerable<Transaction> transactions, byte[] previousHash = null, DateTime? dateTime = null)
         {
-            this.Data = data;
+            this.Transactions = transactions?.ToList() ?? new List<Transaction>();
             this.PreviousHash = previousHash;
             if(dateTime.HasValue) this.CreatedOn = dateTime.Value;
             MineBlock();
@@ -99,13 +97,18 @@ namespace BlockChain_PoC.Base
                 {
                     var timeStampBytes = BitConverter.GetBytes(this.CreatedOn.ToBinary());
 
+                    if (Transactions != null)
+                    {
+                        var transactionsBytes = MessagePack.MessagePackSerializer.Serialize(this.Transactions.ToArray());
+
+                        ms.Write(transactionsBytes);
+                    }
                     ms.Write(timeStampBytes);
                     ms.Write(this.Nonce);
                     if (this.PreviousHash != null)
                     {
                         ms.Write(this.PreviousHash);
                     }
-                    ms.Write(this.Data);
                     var msArray = ms.ToArray();
                     var hashedBlock = hashFunction.ComputeHash(msArray);
                     return hashedBlock;

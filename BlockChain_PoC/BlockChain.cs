@@ -29,13 +29,54 @@ namespace BlockChain_PoC
             }
             blocksStack.Push(block);
         }
-        public void MinePendingTransactions()
+        public void MinePendingTransactions(string rewardAddress)
         {
-
+            var block = Block.CreateBlock(this.pendingTransactions);
+            AddBlock(block);
+            this.pendingTransactions.Clear();
+            this.pendingTransactions.Enqueue(new Transaction()
+            {
+                From = string.Empty,
+                To = rewardAddress,
+                Amount = Reward
+            });
+            if (!IsChainValid())
+            {
+                throw new Exception("Chain is invalid!");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Chain is valid!");
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+        }
+        public void CreateTransaction(Transaction transaction)
+        {
+            pendingTransactions.Enqueue(transaction);
+        }
+        public long GetAddressBalance(string address)
+        {
+            long balance = 0;
+            foreach(var block in blocksStack)
+            {
+                foreach(var transaction in block.Transactions)
+                {
+                    if(transaction.To == address)
+                    {
+                        balance += transaction.Amount;
+                    }
+                    else if(transaction.From == address)
+                    {
+                        balance -= transaction.Amount;
+                    }
+                }
+            }
+            return balance;
         }
         private Block CreateGenesis()
         {
-            var block = Block.CreateBlock("The very first genesis block", null, DateTime.MinValue);
+            var block = Block.CreateBlock(null, null, DateTime.MinValue);
             return block;
         }
         public bool IsChainValid()
