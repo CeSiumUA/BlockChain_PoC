@@ -1,28 +1,27 @@
 ﻿using BlockChain_PoC;
 using BlockChain_PoC.Base;
+using BlockChain_PoC.Crypto;
+using System.Text;
 
 var blockChain = new BlockChain(true);
 
+var keyPair = KeyGen.LoadKey();
+
+string walletAddress = keyPair.PublicKey.GetHex();
+
 while (true)
 {
-    blockChain.CreateTransaction(new Transaction()
+    var transaction = new Transaction()
     {
-        To = "ad1",
-        From = "ad2",
-        Amount = 100
-    });
-    blockChain.CreateTransaction(new Transaction()
-    {
-        To = "ad2",
-        From = "ad1",
-        Amount = 50
-    });
-    blockChain.MinePendingTransactions("Test1");
-    blockChain.MinePendingTransactions("ad3");
+        Amount = 10,
+        From = walletAddress,
+        To = "test1",
+    };
+    transaction.SignTransaction(keyPair);
+    blockChain.AddTransaction(transaction);
+    blockChain.MinePendingTransactions(walletAddress);
 
-    var balance = blockChain.GetAddressBalance("Test1");
-
-    Console.WriteLine($"Balance for Test1 is {balance}");
+    Console.WriteLine($"Current wallet balance: {blockChain.GetAddressBalance(walletAddress)}");
 
     Console.ReadLine();
 }

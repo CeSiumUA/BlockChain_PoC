@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlockChain_PoC.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BlockChain_PoC.Base
 {
-    internal record Block
+    internal record Block : IValidatable
     {
         const int Difficulty = 2;
         public IEnumerable<Transaction> Transactions { get; init; }
@@ -114,6 +115,15 @@ namespace BlockChain_PoC.Base
                     return hashedBlock;
                 }
             }
+        }
+
+        public bool IsValid()
+        {
+            foreach(var transaction in this.Transactions)
+            {
+                if (!transaction.IsValid()) return false;
+            }
+            return true;
         }
     }
 }

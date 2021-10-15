@@ -1,4 +1,5 @@
 ﻿using BlockChain_PoC.Base;
+using BlockChain_PoC.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BlockChain_PoC
 {
-    internal class BlockChain
+    internal class BlockChain : IValidatable
     {
         private Stack<Block> blocksStack = new Stack<Block>();
         private Queue<Transaction> pendingTransactions = new Queue<Transaction>();
@@ -20,7 +21,7 @@ namespace BlockChain_PoC
                 blocksStack.Push(genesisBlock);
             }
         }
-        public void AddBlock(Block block)
+        private void AddBlock(Block block)
         {
             var lastBlock = blocksStack.Peek();
             if (lastBlock != null)
@@ -31,16 +32,16 @@ namespace BlockChain_PoC
         }
         public void MinePendingTransactions(string rewardAddress)
         {
-            var block = Block.CreateBlock(this.pendingTransactions);
-            AddBlock(block);
-            this.pendingTransactions.Clear();
             this.pendingTransactions.Enqueue(new Transaction()
             {
                 From = string.Empty,
                 To = rewardAddress,
                 Amount = Reward
             });
-            if (!IsChainValid())
+            var block = Block.CreateBlock(this.pendingTransactions);
+            AddBlock(block);
+            this.pendingTransactions.Clear();
+            if (!IsValid())
             {
                 throw new Exception("Chain is invalid!");
             }
@@ -51,8 +52,18 @@ namespace BlockChain_PoC
                 Console.ForegroundColor = ConsoleColor.White;
             }
         }
-        public void CreateTransaction(Transaction transaction)
+        public void AddTransaction(Transaction transaction)
         {
+            if(string.IsNullOrEmpty(transaction.To) || string.IsNullOrEmpty(transaction.From))
+            {
+                throw new ArgumentNullException("From and To addresses must be filled!");
+            }
+
+            if (!transaction.IsValid())
+            {
+                throw new InvalidOperationException("Transaction is invalid!");
+            }
+
             pendingTransactions.Enqueue(transaction);
         }
         public long GetAddressBalance(string address)
@@ -79,7 +90,7 @@ namespace BlockChain_PoC
             var block = Block.CreateBlock(null, null, DateTime.MinValue);
             return block;
         }
-        public bool IsChainValid()
+        public bool IsValid()
         {
             var blockList = blocksStack.Reverse().ToArray();
             for(int x = 1; x < blocksStack.Count; x++)
@@ -93,6 +104,11 @@ namespace BlockChain_PoC
                 }
 
                 if(!Enumerable.SequenceEqual<byte>(currentBlock.PreviousHash, previousBlock.Hash))
+                {
+                    return false;
+                }
+
+                if (!currentBlock.IsValid())
                 {
                     return false;
                 }
