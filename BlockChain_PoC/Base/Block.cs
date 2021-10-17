@@ -1,127 +1,85 @@
 ﻿using BlockChain_PoC.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BlockChain_PoC.Base
 {
-    internal record Block : IValidatable
+    public record Block : IHashable
     {
-        const int Difficulty = 2;
-        public IEnumerable<Transaction> Transactions { get; init; }
-        public DateTime CreatedOn { get; init; } = DateTime.UtcNow;
+        public int Difficulty { get; private set; }
+        public long Id { get; init;}
+        public DateTime TimeStamp { get; init; } = DateTime.Now;
+        public List<ITransaction> Transactions { get; init; } = new List<ITransaction>();
+        public bool IsMined
+        {
+            get
+            {
+                return isMinded;
+            }
+        }
         public byte[] Nonce
         {
             get
             {
                 return nonce;
             }
-            private set
-            {
-                nonce = value;
-                hash = CreateHash();
-            }
         }
-        public byte[] Hash
+        public Block(IEnumerable<ITransaction> transactions, long id, byte[] previousHash, int difficulty = 3)
         {
-            get
-            {
-                if (hash == null)
-                {
-                    hash = CreateHash();
-                }
-                return hash;
-            }
-        }
-        public byte[] PreviousHash
-        {
-            get
-            {
-                return previuosHash;
-            }
-            set
-            {
-                previuosHash = value;
-                hash = CreateHash();
-            }
-        }
-        public static Block CreateBlock(IEnumerable<Transaction> transactions, byte[] previousHash = null, DateTime? dateTime = null)
-        {
-            var block = new Block(transactions, previousHash, dateTime);
-
-            return block;
-        }
-        public Block(IEnumerable<Transaction> transactions, byte[] previousHash = null, DateTime? dateTime = null)
-        {
-            this.Transactions = transactions?.ToList() ?? new List<Transaction>();
+            this.Transactions = transactions.ToList();
+            this.Id = id;
             this.PreviousHash = previousHash;
-            if(dateTime.HasValue) this.CreatedOn = dateTime.Value;
-            MineBlock();
+            this.Difficulty = difficulty;
         }
-        private void MineBlock()
+        public void MineBlock()
         {
             using(RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
                 long tries = 0;
                 do
                 {
-                    var nonceBytes = new byte[8];
+                    var nonceBytes = new byte[64];
                     rng.GetBytes(nonceBytes);
-
-                    this.Nonce = nonceBytes;
-                    tries++;
-                }
-                while (!DifficultyProofed());
+                    this.nonce = nonceBytes;
+                } while (!IsDifficultyProofed());
             }
+            isMinded = true;
         }
-        private bool DifficultyProofed()
-        {
-            if(!Enumerable.SequenceEqual<byte>(this.Nonce.Take(Difficulty), Enumerable.Repeat<byte>(0, Difficulty)))
-            {
-                return false;
-            }
-            return true;
-        }
-        private byte[] hash { get; set; }
+        public byte[] PreviousHash { get; init; }
         private byte[] nonce { get; set; }
-        private byte[] previuosHash { get; set; }
-        public byte[] CreateHash()
+        private bool isMinded { get; set; } = false;
+        public byte[] GetHash()
         {
-            var hashFunction = SHA256.Create();
-            using (hashFunction)
+            using (var sha256 = SHA256.Create())
             {
                 using(MemoryStream ms = new MemoryStream())
                 {
-                    var timeStampBytes = BitConverter.GetBytes(this.CreatedOn.ToBinary());
-
-                    if (Transactions != null)
-                    {
-                        var transactionsBytes = MessagePack.MessagePackSerializer.Serialize(this.Transactions.ToArray());
-
-                        ms.Write(transactionsBytes);
-                    }
-                    ms.Write(timeStampBytes);
+                    ms.Write(Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(this.Transactions)));
                     ms.Write(this.Nonce);
-                    if (this.PreviousHash != null)
-                    {
-                        ms.Write(this.PreviousHash);
-                    }
-                    var msArray = ms.ToArray();
-                    var hashedBlock = hashFunction.ComputeHash(msArray);
-                    return hashedBlock;
+                    ms.Write(BitConverter.GetBytes(this.Difficulty));
+                    ms.Write(BitConverter.GetBytes(this.Id));
+                    ms.Write(BitConverter.GetBytes(this.TimeStamp.ToBinary()));
+                    var bytesToHash = ms.ToArray();
+                    return sha256.ComputeHash(bytesToHash);
                 }
             }
         }
 
         public bool IsValid()
         {
-            foreach(var transaction in this.Transactions)
+            throw new NotImplementedException();
+        }
+        private bool IsDifficultyProofed()
+        {
+            var bits = new BitArray(GetHash());
+            for(int x = 0; x < Difficulty; x++)
             {
-                if (!transaction.IsValid()) return false;
+                if(!bits[x]) return false;
             }
             return true;
         }

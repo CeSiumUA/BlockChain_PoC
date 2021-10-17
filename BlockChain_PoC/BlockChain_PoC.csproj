@@ -8,13 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MessagePack" Version="2.3.85" />
+    <PackageReference Include="Autofac" Version="6.3.0" />
     <PackageReference Include="Secp256k1.Native" Version="0.1.20" />
     <PackageReference Include="Secp256k1.Net" Version="0.1.55" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="key.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Network\peers.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
