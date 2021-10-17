@@ -63,6 +63,7 @@ namespace BlockChain_PoC.Base
                     ms.Write(this.Nonce);
                     ms.Write(BitConverter.GetBytes(this.Difficulty));
                     ms.Write(BitConverter.GetBytes(this.Id));
+                    ms.Write(this.PreviousHash);
                     ms.Write(BitConverter.GetBytes(this.TimeStamp.ToBinary()));
                     var bytesToHash = ms.ToArray();
                     return sha256.ComputeHash(bytesToHash);
