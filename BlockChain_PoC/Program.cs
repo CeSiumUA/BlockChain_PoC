@@ -9,9 +9,9 @@ var builder = new ContainerBuilder();
 
 builder.RegisterType<PeerClient>().SingleInstance();
 
-var blockChain = new BlockChain(true);
+//var blockChain = new BlockChain(true);
 
-builder.RegisterInstance(blockChain).SingleInstance();
+//builder.RegisterInstance(blockChain).SingleInstance();
 
 var keyPair = KeyGen.LoadKey();
 

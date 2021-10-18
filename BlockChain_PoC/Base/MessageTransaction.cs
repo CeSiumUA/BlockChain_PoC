@@ -73,6 +73,7 @@ namespace BlockChain_PoC.Base
             {
                 throw new InvalidOperationException("You have no permission for this operation!");
             }
+            this.hash = GetHash();
             using(var secp256k1 = new Secp256k1())
             {
                 secp256k1.Sign(signature, Hash, keyPair.PrivateKey);

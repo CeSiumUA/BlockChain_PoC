@@ -29,11 +29,18 @@ namespace BlockChain_PoC.Base
                 return nonce;
             }
         }
+        public byte[] Hash
+        {
+            get
+            {
+                return hash;
+            }
+        }
         public Block(IEnumerable<ITransaction> transactions, long id, byte[] previousHash, int difficulty = 3)
         {
             this.Transactions = transactions.ToList();
             this.Id = id;
-            this.PreviousHash = previousHash;
+            this.PreviousHash = previousHash ?? new byte[0];
             this.Difficulty = difficulty;
         }
         public void MineBlock()
@@ -46,13 +53,16 @@ namespace BlockChain_PoC.Base
                     var nonceBytes = new byte[64];
                     rng.GetBytes(nonceBytes);
                     this.nonce = nonceBytes;
+                    tries++;
                 } while (!IsDifficultyProofed());
             }
             isMinded = true;
+            this.hash = GetHash();
         }
         public byte[] PreviousHash { get; init; }
         private byte[] nonce { get; set; }
         private bool isMinded { get; set; } = false;
+        private byte[] hash { get; set; }
         public byte[] GetHash()
         {
             using (var sha256 = SHA256.Create())
@@ -73,16 +83,26 @@ namespace BlockChain_PoC.Base
 
         public bool IsValid()
         {
-            throw new NotImplementedException();
+            return this.Transactions.All(x => x.IsValid()) && (Enumerable.SequenceEqual<byte>(this.Hash, GetHash())) && IsDifficultyProofed();
         }
         private bool IsDifficultyProofed()
         {
-            var bits = new BitArray(GetHash());
-            for(int x = 0; x < Difficulty; x++)
+            if (validateByBits)
             {
-                if(!bits[x]) return false;
+                var bits = new BitArray(GetHash());
+                for (int x = 0; x < Difficulty; x++)
+                {
+                    if (!bits[x]) return false;
+                }
+                return true;
             }
-            return true;
+            else
+            {
+                var blockHash = GetHash();
+                var sequenceEqual = Enumerable.SequenceEqual<byte>(blockHash.Take(this.Difficulty), Enumerable.Repeat<byte>(0, this.Difficulty));
+                return sequenceEqual;
+            }
         }
+        private const bool validateByBits = false;
     }
 }
