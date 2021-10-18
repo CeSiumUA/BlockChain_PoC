@@ -20,7 +20,7 @@ namespace BlockChain_PoC_Tests
         [Fact]
         public void MineBlock_ValidTransaction_Tests()
         {
-            var block = new Block(this._validTransactions, 1, null, 3);
+            var block = new Block(this._validTransactions, 1, null, 2);
             block.MineBlock();
             var isValid = block.IsValid();
             Assert.True(isValid);
