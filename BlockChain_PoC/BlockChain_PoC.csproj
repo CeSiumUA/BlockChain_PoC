@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <None Update="key.dat">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Network\peers.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

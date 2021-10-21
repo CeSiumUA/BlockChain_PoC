@@ -46,10 +46,10 @@ namespace BlockChain_PoC.Crypto
             {
                 throw new FileNotFoundException($"File with key pair: {path} was not found!");
             }
-            if (createIfNotExists)
+            if (!File.Exists(path) && createIfNotExists)
             {
                 var generatedkeypair = CreateKeyPair();
-                string textToWrite = $"{generatedkeypair.PrivateKey}{Environment.NewLine}{generatedkeypair.PublicKey}";
+                string textToWrite = $"{generatedkeypair.PrivateKey.GetHex()}{Environment.NewLine}{generatedkeypair.PublicKey.GetHex()}";
                 File.WriteAllText(path, textToWrite);
             }
             var fileText = File.ReadAllLines(path);
