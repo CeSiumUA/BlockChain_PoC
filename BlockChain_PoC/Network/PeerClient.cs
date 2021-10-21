@@ -15,7 +15,7 @@ namespace BlockChain_PoC.Network
     {
         private TcpListener _listener;
         private Task listeningTask;
-        private List<TcpClient> _clients;
+        private List<TcpClient> _clients = new List<TcpClient>();
         private IDataParser _parser;
         private IPeerProvider _peerProvider;
         private readonly IMediator _mediator;
