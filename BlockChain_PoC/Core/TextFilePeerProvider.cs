@@ -11,7 +11,7 @@ namespace BlockChain_PoC.Core
 {
     public class TextFilePeerProvider : IPeerProvider
     {
-        private const string fileName = "Network/peers.txt";
+        private const string fileName = "Network/peers.json";
         public async Task<IEnumerable<NetworkMember>> GetPeersAsync()
         {
             var json = await File.ReadAllTextAsync($"{Environment.CurrentDirectory}/{fileName}");
