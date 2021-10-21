@@ -11,10 +11,10 @@ namespace BlockChain_PoC.Core
 {
     public class TextFilePeerProvider : IPeerProvider
     {
-        private const string fileName = "peers.txt";
+        private const string fileName = "Network/peers.txt";
         public async Task<IEnumerable<NetworkMember>> GetPeersAsync()
         {
-            var json = await File.ReadAllTextAsync(fileName);
+            var json = await File.ReadAllTextAsync($"{Environment.CurrentDirectory}/{fileName}");
             var networkMembers = JsonSerializer.Deserialize<NetworkMember[]>(json)?.Where(x => !x.IsMine);
             return networkMembers;
         }
