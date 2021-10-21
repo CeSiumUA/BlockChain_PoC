@@ -1,24 +1,39 @@
 ﻿using Autofac;
 using BlockChain_PoC;
 using BlockChain_PoC.Base;
+using BlockChain_PoC.Core;
 using BlockChain_PoC.Crypto;
+using BlockChain_PoC.Interfaces;
 using BlockChain_PoC.Network;
+using BlockChain_PoC.Parsers;
+using MediatR.Extensions.Autofac.DependencyInjection;
+using System.Reflection;
 using System.Text;
 
 var builder = new ContainerBuilder();
 
-builder.RegisterType<PeerClient>().SingleInstance();
+builder.RegisterType<PeerClient>().As<INetworkInterface>().SingleInstance();
 
-//var blockChain = new BlockChain(true);
+builder.RegisterType<ConsoleActionsHandler>().SingleInstance();
 
-//builder.RegisterInstance(blockChain).SingleInstance();
+builder.RegisterType<BlockChain>().As<IBlockChain>().SingleInstance();
 
-var keyPair = KeyGen.LoadKey();
+builder.RegisterType<JsonParser>().As<IDataParser>().SingleInstance();
+
+builder.RegisterType<TextFilePeerProvider>().As<IPeerProvider>().SingleInstance();
+
+builder.RegisterMediatR(Assembly.GetExecutingAssembly());
+
+var keyPair = KeyGen.LoadKey(createIfNotExists: true);
 
 string walletAddress = keyPair.PublicKey.GetHex();
 
 var container = builder.Build();
 
-var client = container.Resolve<PeerClient>();
+var client = container.Resolve<INetworkInterface>();
+
+var consoleActionsHanlder = container.Resolve<ConsoleActionsHandler>();
 
 await client.Init();
+
+await consoleActionsHanlder.StartActionsHandler();

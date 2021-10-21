@@ -1,4 +1,4 @@
-﻿using BlockChain_PoC.Commands;
+﻿using BlockChain_PoC.Core.Models.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ namespace BlockChain_PoC.Parsers
     public interface IDataParser
     {
         public Task<Type> GetCommandType(byte[] data);
-        public Task<ICommand> Parse<T>(byte[] data);
-        public Task<ICommand> Parse(byte[] data, Type type);
+        public Task<BaseCommand> Parse<T>(byte[] data);
+        public Task<BaseCommand> Parse(byte[] data, Type type);
     }
 }

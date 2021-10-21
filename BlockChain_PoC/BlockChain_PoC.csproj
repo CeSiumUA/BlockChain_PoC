@@ -9,6 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.3.0" />
+    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="MediatR.Extensions.Autofac.DependencyInjection" Version="7.3.0" />
     <PackageReference Include="Secp256k1.Native" Version="0.1.20" />
     <PackageReference Include="Secp256k1.Net" Version="0.1.55" />
   </ItemGroup>

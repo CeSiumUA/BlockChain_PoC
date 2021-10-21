@@ -1,6 +1,6 @@
-﻿using BlockChain_PoC.Commands;
-using BlockChain_PoC.Interfaces;
+﻿using BlockChain_PoC.Interfaces;
 using BlockChain_PoC.Parsers;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,20 +11,21 @@ using System.Threading.Tasks;
 
 namespace BlockChain_PoC.Network
 {
-    public class PeerClient : IDisposable
+    public class PeerClient : INetworkInterface
     {
         private TcpListener _listener;
         private Task listeningTask;
         private List<TcpClient> _clients;
         private IDataParser _parser;
-        private ICommandsExecuter _executer;
         private IPeerProvider _peerProvider;
-        public PeerClient(IDataParser dataParser, ICommandsExecuter commandExecuter, IPeerProvider peerProvider)
+        private readonly IMediator _mediator;
+
+        public PeerClient(IDataParser dataParser, IPeerProvider peerProvider, IMediator mediator)
         {
             _listener = new TcpListener(IPAddress.Any, 4956);
             _parser = dataParser;
-            _executer = commandExecuter;
             _peerProvider = peerProvider;
+            _mediator = mediator;
         }
 
         public void Dispose()
@@ -89,7 +90,8 @@ namespace BlockChain_PoC.Network
                                 var transferBytes = data.ToArray();
                                 var commnadType = await _parser.GetCommandType(transferBytes);
                                 var command = await _parser.Parse(transferBytes, commnadType);
-                                await _executer.Execute(command, WriteResponse);
+                                var result = await _mediator.Send(command);
+                                await ProcessCommandResult(result, WriteResponse);
                             }
                         }
                     });
@@ -123,11 +125,15 @@ namespace BlockChain_PoC.Network
                 stream.Write(data, 0, data.Length);
             }
         }
-        public async Task Broadcast<T>(T data) where T : class
+        public async Task Broadcast<T>(T data)
         {
             var serialized = System.Text.Json.JsonSerializer.Serialize(data);
             var serializedBytes = Encoding.UTF8.GetBytes(serialized);
             await Broadcast(serializedBytes);
+        }
+        private async Task ProcessCommandResult(object result, Action<byte[]> responseWriteCallback)
+        {
+
         }
     }
 }

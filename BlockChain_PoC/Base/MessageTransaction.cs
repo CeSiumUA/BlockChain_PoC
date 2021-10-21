@@ -1,4 +1,5 @@
-﻿using BlockChain_PoC.Crypto;
+﻿using BlockChain_PoC.Core;
+using BlockChain_PoC.Crypto;
 using BlockChain_PoC.Interfaces;
 using Secp256k1Net;
 using System;
@@ -12,6 +13,7 @@ namespace BlockChain_PoC.Base
 {
     public record MessageTransaction : ITransaction
     {
+        public Guid Id { get; init; } = Guid.NewGuid();
         public byte[] From { get; init; } = new byte[0];
         public string FromAddress
         {
@@ -88,6 +90,7 @@ namespace BlockChain_PoC.Base
                     ms.Write(MessageContent);
                     ms.Write(From);
                     ms.Write(To);
+                    ms.Write(Id.ToByteArray());
                     var bytes = ms.ToArray();
                     return sha256.ComputeHash(bytes);
                 }

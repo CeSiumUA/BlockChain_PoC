@@ -1,4 +1,5 @@
-﻿using Secp256k1Net;
+﻿using BlockChain_PoC.Core;
+using Secp256k1Net;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -38,12 +39,18 @@ namespace BlockChain_PoC.Crypto
                 };
             }
         }
-        public static KeyPair LoadKey(string path = null)
+        public static KeyPair LoadKey(string path = null, bool createIfNotExists = false)
         {
             path = path ?? "key.dat";
-            if (!File.Exists(path))
+            if (!File.Exists(path) && !createIfNotExists)
             {
                 throw new FileNotFoundException($"File with key pair: {path} was not found!");
+            }
+            if (createIfNotExists)
+            {
+                var generatedkeypair = CreateKeyPair();
+                string textToWrite = $"{generatedkeypair.PrivateKey}{Environment.NewLine}{generatedkeypair.PublicKey}";
+                File.WriteAllText(path, textToWrite);
             }
             var fileText = File.ReadAllLines(path);
 
