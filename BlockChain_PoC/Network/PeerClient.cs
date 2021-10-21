@@ -48,6 +48,7 @@ namespace BlockChain_PoC.Network
                 {
                     var client = await _listener.AcceptTcpClientAsync();
                     var clientEndpoint = client.Client.RemoteEndPoint as IPEndPoint;
+                    Console.WriteLine($"Client {clientEndpoint.Address}:{clientEndpoint.Port} connected!");
                     var existingClient = _clients.FirstOrDefault(x =>
                     {
                         var endPoint = (x.Client.RemoteEndPoint as IPEndPoint);
