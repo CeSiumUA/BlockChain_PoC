@@ -15,7 +15,7 @@ namespace BlockChain_PoC.Core
         public async Task<IEnumerable<NetworkMember>> GetPeersAsync()
         {
             var json = await File.ReadAllTextAsync($"{Environment.CurrentDirectory}/{fileName}");
-            var networkMembers = JsonSerializer.Deserialize<NetworkMember[]>(json)?.Where(x => !x.IsMine);
+            var networkMembers = JsonSerializer.Deserialize<NetworkMember[]>(json);
             return networkMembers;
         }
     }
