@@ -104,17 +104,20 @@ namespace BlockChain_PoC.Network
         private async Task LoadPeers()
         {
             var peers = await _peerProvider.GetPeersAsync();
+            Console.WriteLine($"Connecting to {peers.Count()} peers");
             foreach(var peer in peers)
             {
                 TcpClient tcpClient = new TcpClient();
                 try
                 {
+                    Console.WriteLine($"Connecting to {peer.IPAddress}:{peer.Port}!");
                     await tcpClient.ConnectAsync(peer.IPAddress, peer.Port);
                     _clients.Add(tcpClient);
+                    Console.WriteLine($"Connected to {peer.IPAddress}:{peer.Port}!");
                 }
                 catch(Exception ex)
                 {
-
+                    Console.Write($"Failed to connect to {peer.IPAddress}:{peer.Port}");
                 }
             }
         }
