@@ -24,9 +24,11 @@ builder.RegisterType<TextFilePeerProvider>().As<IPeerProvider>().SingleInstance(
 
 builder.RegisterMediatR(Assembly.GetExecutingAssembly());
 
+builder.RegisterType<ConsoleUserIO>().As<IUserIO>().SingleInstance();
+
 var keyPair = KeyGen.LoadKey(createIfNotExists: true);
 
-string walletAddress = keyPair.PublicKey.GetHex();
+builder.RegisterInstance(keyPair).SingleInstance();
 
 var container = builder.Build();
 

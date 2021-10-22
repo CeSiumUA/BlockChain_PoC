@@ -14,6 +14,8 @@ namespace BlockChain_PoC.Interfaces
         public void AddBlocks(IEnumerable<Block> blocks);
         public void AddPendingTransaction(ITransaction transaction);
         public void AddPendingTransactions(IEnumerable<ITransaction> transactions);
+        public Block GetPendingTransactionsBlock(int? batchSize = null);
+        public Block ProcessPendingTransactions(int? batchSize = null);
         public ITransaction PopTransaction();
     }
 }

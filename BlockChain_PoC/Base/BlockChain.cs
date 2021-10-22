@@ -26,14 +26,18 @@ namespace BlockChain_PoC.Base
         }
         public Block AddBlock(Block block)
         {
-            if (!block.IsMined)
+            if (!Blocks.Any(x => x.Id == block.Id))
             {
-                block.MineBlock();
-            }
-            var lastBlockHash = GetLatestBlock()?.Hash ?? new byte[0];
-            if (block.IsValid() && Enumerable.SequenceEqual<byte>(block.PreviousHash, lastBlockHash))
-            {
-                Blocks.Add(block);
+                if (!block.IsMined)
+                {
+                    block.MineBlock();
+                }
+                var lastBlockHash = GetLatestBlock()?.Hash ?? new byte[0];
+                if (block.IsValid() && Enumerable.SequenceEqual<byte>(block.PreviousHash, lastBlockHash))
+                {
+                    Blocks.Add(block);
+                    _network.Broadcast(block);
+                }
             }
             return block;
         }
@@ -78,6 +82,39 @@ namespace BlockChain_PoC.Base
         public bool IsValid()
         {
             return this.Blocks.IsChainValid();
+        }
+
+        public Block GetPendingTransactionsBlock(int? batchSize = null)
+        {
+            var transactions = RetreiveTransactions(batchSize);
+            var lastBlock = GetLatestBlock();
+            var block = new Block(transactions, lastBlock?.Id ?? 0, lastBlock?.PreviousHash ?? new byte[0]);
+            return block;
+        }
+
+        public Block ProcessPendingTransactions(int? batchSize = null)
+        {
+            var pendingTransactionBlock = GetPendingTransactionsBlock(batchSize);
+            return AddBlock(pendingTransactionBlock);
+        }
+
+        private IEnumerable<ITransaction> RetreiveTransactions(int? batchSize = null)
+        {
+            List<ITransaction> transactions = new List<ITransaction>();
+            if (!batchSize.HasValue)
+            {
+                transactions = this.TransactionsQueue.ToList();
+            }
+            else
+            {
+                int dequeued = 0;
+                while (TransactionsQueue.Count > 0 && dequeued < batchSize.Value)
+                {
+                    transactions.Add(TransactionsQueue.Dequeue());
+                    dequeued++;
+                }
+            }
+            return transactions;
         }
     }
 }

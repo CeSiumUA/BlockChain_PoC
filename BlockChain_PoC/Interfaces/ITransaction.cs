@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlockChain_PoC.Crypto;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,6 @@ namespace BlockChain_PoC.Interfaces
         public string ToAddress { get; }
         public byte[] Hash { get; }
         public byte[] Signature { get; }
+        public void SignTransaction(KeyPair keyPair);
     }
 }
