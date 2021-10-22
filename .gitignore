@@ -32,6 +32,6 @@ bld/
 msbuild.log
 msbuild.err
 msbuild.wrn
-
+key.dat
 # Visual Studio 2015
 .vs/
