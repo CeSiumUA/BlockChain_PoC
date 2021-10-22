@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace BlockChain_PoC.Core.Models.Dto
 {
-    public abstract class BaseCommand
+    public class BaseCommand
     {
-        public abstract DataTransferObjectType Type { get; }
+        public BaseCommand()
+        {
+
+        }
+        public virtual DataTransferObjectType Type { get; }
     }
 }
