@@ -1,4 +1,5 @@
 ﻿using BlockChain_PoC.Core;
+using BlockChain_PoC.Core.Commands;
 using BlockChain_PoC.Core.Models.Dto;
 using System;
 using System.Collections.Generic;

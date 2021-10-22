@@ -14,6 +14,7 @@ namespace BlockChain_PoC.Base
     public record MessageTransaction : ITransaction
     {
         public Guid Id { get; init; } = Guid.NewGuid();
+        public TransactionType TransactionType => TransactionType.Message;
         public byte[] From { get; init; } = new byte[0];
         public string FromAddress
         {
@@ -30,12 +31,16 @@ namespace BlockChain_PoC.Base
                 return To.GetHex();
             }
         }
-        public byte[] MessageContent { get; init; }
+        public byte[] Content { get; init; }
         public byte[] Hash
         {
             get
             {
                 return hash;
+            }
+            init
+            {
+                hash = value;
             }
         }
         public byte[] Signature
@@ -44,18 +49,22 @@ namespace BlockChain_PoC.Base
             {
                 return signature;
             }
+            init
+            {
+                signature = value;
+            }
         }
         public MessageTransaction(string from, string to, byte[] message)
         {
             this.From = from.ToHexBytes();
             this.To = to.ToHexBytes();
-            this.MessageContent = message;
+            this.Content = message;
         }
         public MessageTransaction(byte[] from, byte[] to, byte[] message)
         {
             this.From = from;
             this.To = to;
-            this.MessageContent = message;
+            this.Content = message;
         }
         public bool IsValid()
         {
@@ -87,7 +96,7 @@ namespace BlockChain_PoC.Base
             {
                 using(MemoryStream ms = new MemoryStream())
                 {
-                    ms.Write(MessageContent);
+                    ms.Write(Content);
                     ms.Write(From);
                     ms.Write(To);
                     ms.Write(Id.ToByteArray());

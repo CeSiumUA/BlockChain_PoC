@@ -21,6 +21,10 @@ namespace BlockChain_PoC.Base
             {
                 return isMinded;
             }
+            init
+            {
+                isMinded = value;
+            }
         }
         public byte[] Nonce
         {
@@ -28,12 +32,20 @@ namespace BlockChain_PoC.Base
             {
                 return nonce;
             }
+            init
+            {
+                nonce = value;
+            }
         }
         public byte[] Hash
         {
             get
             {
                 return hash;
+            }
+            init
+            {
+                hash = value;
             }
         }
         public Block(IEnumerable<ITransaction> transactions, long id, byte[] previousHash, int difficulty = 3)

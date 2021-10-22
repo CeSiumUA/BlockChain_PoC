@@ -1,4 +1,5 @@
 ﻿using BlockChain_PoC.Base;
+using BlockChain_PoC.Core.Models.Dto;
 using BlockChain_PoC.Interfaces;
 using MediatR;
 using System;
@@ -7,12 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlockChain_PoC.Core.Models.Dto
+namespace BlockChain_PoC.Core.Commands
 {
     public class AddBlockCommand : BaseCommand, IRequest<Block>
     {
         public override DataTransferObjectType Type => DataTransferObjectType.AddBlock;
-        public Block AddedBlock { get; set; }
+        public AddedBlockDto AddedBlock { get; set; }
     }
     public class AddBlockCommandHanlder : IRequestHandler<AddBlockCommand, Block>
     {
@@ -27,7 +28,7 @@ namespace BlockChain_PoC.Core.Models.Dto
             {
                 throw new ArgumentNullException();
             }
-            return _blockchain.AddBlock(request.AddedBlock);
+            return _blockchain.AddBlock(request.AddedBlock.ConvertToBlock());
         }
     }
 }

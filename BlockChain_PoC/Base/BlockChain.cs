@@ -1,4 +1,5 @@
 ﻿using BlockChain_PoC.Core;
+using BlockChain_PoC.Core.Commands;
 using BlockChain_PoC.Core.Exceptions;
 using BlockChain_PoC.Core.Models.Dto;
 using BlockChain_PoC.Interfaces;
@@ -121,7 +122,7 @@ namespace BlockChain_PoC.Base
         {
             var addBlockCommand = new AddBlockCommand()
             {
-                AddedBlock = block,
+                AddedBlock = AddedBlockDto.ConvertToDto(block),
             };
             _network.Broadcast(addBlockCommand);
         }
