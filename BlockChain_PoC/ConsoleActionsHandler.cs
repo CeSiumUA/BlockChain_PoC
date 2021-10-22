@@ -59,7 +59,14 @@ namespace BlockChain_PoC
             var message = messagePattern.Match(arguments).Groups[3].Value;
             #endregion
             ITransaction messageTransaction = new MessageTransaction(from, to, Encoding.UTF8.GetBytes(message));
-            messageTransaction.SignTransaction(_keyPair);
+            try
+            {
+                messageTransaction.SignTransaction(_keyPair);
+            }
+            catch(Exception ex)
+            {
+                _userIO.SendUserTextOutput(ex.ToString());
+            }
             _blockChain.AddPendingTransaction(messageTransaction);
             _blockChain.ProcessPendingTransactions();
         }
