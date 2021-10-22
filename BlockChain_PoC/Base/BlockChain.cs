@@ -89,7 +89,7 @@ namespace BlockChain_PoC.Base
         {
             var transactions = RetreiveTransactions(batchSize);
             var lastBlock = GetLatestBlock();
-            var block = new Block(transactions, lastBlock?.Id ?? 0, lastBlock?.PreviousHash ?? new byte[0]);
+            var block = new Block(transactions, lastBlock?.Id ?? 0, lastBlock?.PreviousHash ?? new byte[0], 2);
             return block;
         }
 
