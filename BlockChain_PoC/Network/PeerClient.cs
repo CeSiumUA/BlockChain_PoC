@@ -40,7 +40,6 @@ namespace BlockChain_PoC.Network
 
         public async Task Init()
         {
-            await LoadPeers();
             _listener.Start();
             listeningTask = new Task(async () =>
             {
@@ -86,6 +85,7 @@ namespace BlockChain_PoC.Network
                                 catch (Exception ex)
                                 {
                                     _clients.Remove(client);
+                                    Console.WriteLine($"Client {clientEndpoint.Address}:{clientEndpoint.Port} disconnected!");
                                     return;
                                 }
                             }
@@ -108,6 +108,7 @@ namespace BlockChain_PoC.Network
                 }
             });
             listeningTask.Start();
+            await LoadPeers();
         }
         private async Task LoadPeers()
         {
@@ -120,7 +121,15 @@ namespace BlockChain_PoC.Network
                 {
                     Console.WriteLine($"Connecting to {peer.IPAddress}:{peer.Port}!");
                     await tcpClient.ConnectAsync(peer.IPAddress, peer.Port);
-                    _clients.Add(tcpClient);
+                    if (!_clients.Any(x =>
+                     {
+                         var existingEndPoint = (x.Client.RemoteEndPoint as IPEndPoint);
+                         var usedEndPoint = tcpClient.Client.RemoteEndPoint as IPEndPoint;
+                         return existingEndPoint.Address == usedEndPoint.Address && existingEndPoint.Port == usedEndPoint.Port;
+                     }))
+                    {
+                        _clients.Add(tcpClient);
+                    }
                     Console.WriteLine($"Connected to {peer.IPAddress}:{peer.Port}!");
                 }
                 catch(Exception ex)
