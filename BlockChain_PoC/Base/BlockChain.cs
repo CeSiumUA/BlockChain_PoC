@@ -105,7 +105,10 @@ namespace BlockChain_PoC.Base
             List<ITransaction> transactions = new List<ITransaction>();
             if (!batchSize.HasValue)
             {
-                transactions = this.TransactionsQueue.ToList();
+                while (TransactionsQueue.Count > 0)
+                {
+                    transactions.Add(TransactionsQueue.Dequeue());
+                }
             }
             else
             {
