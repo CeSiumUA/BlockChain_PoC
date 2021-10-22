@@ -1,5 +1,6 @@
 ﻿using BlockChain_PoC.Core;
 using BlockChain_PoC.Core.Exceptions;
+using BlockChain_PoC.Core.Models.Dto;
 using BlockChain_PoC.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace BlockChain_PoC.Base
                 if (block.IsValid() && Enumerable.SequenceEqual<byte>(block.PreviousHash, lastBlockHash))
                 {
                     Blocks.Add(block);
-                    _network.Broadcast(block);
+                    BroadcastAddBlockCommand(block);
                 }
             }
             return block;
@@ -115,6 +116,14 @@ namespace BlockChain_PoC.Base
                 }
             }
             return transactions;
+        }
+        private void BroadcastAddBlockCommand(Block block)
+        {
+            var addBlockCommand = new AddBlockCommand()
+            {
+                AddedBlock = block,
+            };
+            _network.Broadcast(addBlockCommand);
         }
     }
 }
