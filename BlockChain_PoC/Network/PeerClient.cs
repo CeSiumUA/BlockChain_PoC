@@ -78,8 +78,16 @@ namespace BlockChain_PoC.Network
                             int bytes = 0;
                             do
                             {
-                                bytes = stream.Read(dataArray, 0, dataArray.Length);
-                                data.AddRange(dataArray.Take(bytes));
+                                try
+                                {
+                                    bytes = stream.Read(dataArray, 0, dataArray.Length);
+                                    data.AddRange(dataArray.Take(bytes));
+                                }
+                                catch (Exception ex)
+                                {
+                                    _clients.Remove(client);
+                                    return;
+                                }
                             }
                             while (stream.DataAvailable);
                             if (data.Count > 0)
@@ -117,7 +125,7 @@ namespace BlockChain_PoC.Network
                 }
                 catch(Exception ex)
                 {
-                    Console.Write($"Failed to connect to {peer.IPAddress}:{peer.Port}");
+                    Console.WriteLine($"Failed to connect to {peer.IPAddress}:{peer.Port}");
                 }
             }
         }
