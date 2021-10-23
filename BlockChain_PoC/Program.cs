@@ -26,6 +26,8 @@ builder.RegisterMediatR(Assembly.GetExecutingAssembly());
 
 builder.RegisterType<ConsoleUserIO>().As<IUserIO>().SingleInstance();
 
+builder.RegisterType<TextFilePeerProvider>().As<IBlockChainStorage>().SingleInstance();
+
 var keyPair = KeyGen.LoadKey(createIfNotExists: true);
 
 builder.RegisterInstance(keyPair).SingleInstance();

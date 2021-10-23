@@ -5,6 +5,8 @@ using BlockChain_PoC.Core.Models.Dto;
 using BlockChain_PoC.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,13 +15,21 @@ namespace BlockChain_PoC.Base
 {
     public class BlockChain : IBlockChain
     {
-        private List<Block> Blocks { get; set; } = new List<Block>();
+        private ObservableCollection<Block> Blocks { get; set; } = new ObservableCollection<Block>();
         public Queue<ITransaction> TransactionsQueue { get; set; } = new Queue<ITransaction>();
         private object _queueLock = new object();
-        private INetworkInterface _network;
-        public BlockChain(INetworkInterface networkInterface)
+        private readonly INetworkInterface _network;
+        private readonly IBlockChainStorage _blockChainStorage;
+        public BlockChain(INetworkInterface networkInterface, IBlockChainStorage blockChainStorage)
         {
             _network = networkInterface;
+            _blockChainStorage = blockChainStorage;
+            Blocks.CollectionChanged += HandleBlocksCollectionChanged;
+        }
+
+        private void HandleBlocksCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
         #region AddGetBlock
         public Block? GetLatestBlock()
@@ -30,12 +40,20 @@ namespace BlockChain_PoC.Base
         {
             if (!Blocks.Any(x => x.Id == block.Id))
             {
+                var lastBlockHash = GetLatestBlock()?.Hash ?? new byte[0];
+                bool CheckPreviousBlockHashEquality()
+                {
+                    return Enumerable.SequenceEqual<byte>(block.PreviousHash, lastBlockHash);
+                }
+                if (!CheckPreviousBlockHashEquality())
+                {
+                    return block;
+                }
                 if (!block.IsMined)
                 {
                     block.MineBlock();
                 }
-                var lastBlockHash = GetLatestBlock()?.Hash ?? new byte[0];
-                if (block.IsValid() && Enumerable.SequenceEqual<byte>(block.PreviousHash, lastBlockHash))
+                if (block.IsValid() && CheckPreviousBlockHashEquality())
                 {
                     Blocks.Add(block);
                     BroadcastAddBlockCommand(block);
