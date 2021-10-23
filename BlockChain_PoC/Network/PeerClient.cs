@@ -109,6 +109,7 @@ namespace BlockChain_PoC.Network
                                 var command = await _parser.Parse(transferBytes, commnadType);
                                 if (command != null)
                                 {
+                                    _userIO.SendUserTextOutput($"Hot command of type: {command.Type}");
                                     var result = await _mediator.Send(command);
                                     await ProcessCommandResult(result, WriteResponse);
                                 }
