@@ -115,6 +115,6 @@ namespace BlockChain_PoC.Base
                 return sequenceEqual;
             }
         }
-        private const bool validateByBits = false;
+        private bool validateByBits = false;
     }
 }
