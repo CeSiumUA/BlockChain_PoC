@@ -100,18 +100,14 @@ namespace BlockChain_PoC.Network
                             while (stream.DataAvailable);
                             if (data.Count > 0)
                             {
-                                void WriteResponse(byte[] data)
-                                {
-                                    stream.Write(data, 0, data.Length);
-                                }
                                 var transferBytes = data.ToArray();
                                 var commnadType = await _parser.GetCommandType(transferBytes);
                                 var command = await _parser.Parse(transferBytes, commnadType);
                                 if (command != null)
                                 {
-                                    _userIO.SendUserTextOutput($"Hot command of type: {command.Type}");
+                                    _userIO.SendUserTextOutput($"Got command of type: {command.Type}");
                                     var result = await _mediator.Send(command);
-                                    await ProcessCommandResult(result, WriteResponse);
+                                    await ProcessCommandResult(result, stream);
                                 }
                             }
                         }
@@ -169,7 +165,7 @@ namespace BlockChain_PoC.Network
             var serializedBytes = Encoding.UTF8.GetBytes(serialized);
             await Broadcast(serializedBytes);
         }
-        private async Task ProcessCommandResult(object? result, Action<byte[]> responseWriteCallback)
+        private async Task ProcessCommandResult(object? result, Stream stream)
         {
 
         }
