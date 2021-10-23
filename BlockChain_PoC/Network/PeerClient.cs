@@ -154,8 +154,12 @@ namespace BlockChain_PoC.Network
         {
             foreach (var peer in _clients)
             {
-                var stream = peer.GetStream();
-                stream.Write(data, 0, data.Length);
+                try
+                {
+                    var stream = peer.GetStream();
+                    stream.Write(data, 0, data.Length);
+                }
+                catch { }
             }
         }
         public async Task Broadcast<T>(T data)
