@@ -1,9 +1,4 @@
 ﻿using BlockChain_PoC.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlockChain_PoC.Core.Models.Dto
 {
@@ -11,7 +6,7 @@ namespace BlockChain_PoC.Core.Models.Dto
     {
         public int Difficulty { get; init; }
         public long Id { get; init; }
-        public DateTime TimeStamp { get;init; } = DateTime.Now;
+        public DateTime TimeStamp { get; init; } = DateTime.Now;
         public bool IsMined { get; init; }
         public byte[]? Nonce { get; init; }
         public byte[]? Hash { get; init; }

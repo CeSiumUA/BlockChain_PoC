@@ -1,11 +1,7 @@
 ﻿using BlockChain_PoC.Base;
 using BlockChain_PoC.Crypto;
 using Bogus;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace BlockChain_PoC_Tests
@@ -14,7 +10,7 @@ namespace BlockChain_PoC_Tests
     {
         private readonly Faker _faker;
         public TransactionTests()
-        { 
+        {
             _faker = new Faker();
         }
         [Xunit.Fact]

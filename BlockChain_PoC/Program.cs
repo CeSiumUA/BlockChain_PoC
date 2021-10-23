@@ -8,7 +8,6 @@ using BlockChain_PoC.Network;
 using BlockChain_PoC.Parsers;
 using MediatR.Extensions.Autofac.DependencyInjection;
 using System.Reflection;
-using System.Text;
 
 var builder = new ContainerBuilder();
 

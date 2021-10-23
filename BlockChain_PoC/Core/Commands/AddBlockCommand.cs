@@ -2,11 +2,6 @@
 using BlockChain_PoC.Core.Models.Dto;
 using BlockChain_PoC.Interfaces;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlockChain_PoC.Core.Commands
 {
@@ -24,7 +19,7 @@ namespace BlockChain_PoC.Core.Commands
         }
         public async Task<Block> Handle(AddBlockCommand request, CancellationToken cancellationToken)
         {
-            if(request.AddedBlock == null)
+            if (request.AddedBlock == null)
             {
                 throw new ArgumentNullException();
             }

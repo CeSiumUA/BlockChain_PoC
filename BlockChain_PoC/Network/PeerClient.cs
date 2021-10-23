@@ -1,14 +1,10 @@
 ﻿using BlockChain_PoC.Interfaces;
 using BlockChain_PoC.Parsers;
 using MediatR;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BlockChain_PoC.Network
 {
@@ -40,7 +36,7 @@ namespace BlockChain_PoC.Network
         public void Dispose()
         {
             _listener.Stop();
-            foreach(var client in _clients)
+            foreach (var client in _clients)
             {
                 client.Close();
                 client.Dispose();
@@ -61,7 +57,7 @@ namespace BlockChain_PoC.Network
                     var existingClient = _clients.FirstOrDefault(x =>
                     {
                         var endPoint = (x.Client.RemoteEndPoint as IPEndPoint);
-                        if(endPoint?.Address.ToString() == clientEndpoint?.Address.ToString() && endPoint?.Port == clientEndpoint?.Port)
+                        if (endPoint?.Address.ToString() == clientEndpoint?.Address.ToString() && endPoint?.Port == clientEndpoint?.Port)
                         {
                             return true;
                         }
@@ -74,7 +70,8 @@ namespace BlockChain_PoC.Network
                         existingClient.Dispose();
                         _clients[index] = client;
                     }
-                    else {
+                    else
+                    {
                         _clients.Add(client);
                     }
                     var clientProcessorTask = new Task(async () =>
@@ -128,7 +125,7 @@ namespace BlockChain_PoC.Network
         {
             var peers = await _peerProvider.GetPeersAsync();
             _userIO.SendUserTextOutput($"Connecting to {peers.Count()} peers");
-            foreach(var peer in peers)
+            foreach (var peer in peers)
             {
                 TcpClient tcpClient = new TcpClient();
                 try
@@ -146,7 +143,7 @@ namespace BlockChain_PoC.Network
                     }
                     _userIO.SendUserTextOutput($"Connected to {peer.IPAddress}:{peer.Port}!");
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _userIO.LogException(ex.ToString());
                     _userIO.SendUserTextOutput($"Failed to connect to {peer.IPAddress}:{peer.Port}");
@@ -155,7 +152,7 @@ namespace BlockChain_PoC.Network
         }
         public async Task Broadcast(byte[] data)
         {
-            foreach(var peer in _clients)
+            foreach (var peer in _clients)
             {
                 var stream = peer.GetStream();
                 stream.Write(data, 0, data.Length);

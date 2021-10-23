@@ -1,9 +1,4 @@
 ﻿using BlockChain_PoC.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlockChain_PoC.Core
 {
@@ -21,19 +16,19 @@ namespace BlockChain_PoC.Core
         public static bool IsChainValid(this IEnumerable<Block> blocks)
         {
             var blocksList = blocks.ToList();
-            if(blocksList.Count == 1)
+            if (blocksList.Count == 1)
             {
                 return blocksList.First().IsValid();
             }
-            for(int x = 1; x < blocksList.Count; x++)
+            for (int x = 1; x < blocksList.Count; x++)
             {
                 var currentBlock = blocksList[x];
                 var previousBlock = blocksList[x - 1];
-                if(!currentBlock.IsValid() || !previousBlock.IsValid())
+                if (!currentBlock.IsValid() || !previousBlock.IsValid())
                 {
                     return false;
                 }
-                if(!Enumerable.SequenceEqual(currentBlock.PreviousHash, previousBlock.Hash))
+                if (!Enumerable.SequenceEqual(currentBlock.PreviousHash, previousBlock.Hash))
                 {
                     return false;
                 }

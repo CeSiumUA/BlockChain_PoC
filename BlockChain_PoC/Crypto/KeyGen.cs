@@ -1,12 +1,6 @@
 ﻿using BlockChain_PoC.Core;
 using Secp256k1Net;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlockChain_PoC.Crypto
 {
@@ -14,7 +8,7 @@ namespace BlockChain_PoC.Crypto
     {
         public static KeyPair CreateKeyPair()
         {
-            using(var secp256k1 = new Secp256k1())
+            using (var secp256k1 = new Secp256k1())
             {
                 var privateKey = new byte[32];
                 using (var rng = RandomNumberGenerator.Create())
@@ -23,10 +17,10 @@ namespace BlockChain_PoC.Crypto
                     {
                         rng.GetBytes(privateKey);
                     }
-                    while(!secp256k1.SecretKeyVerify(privateKey));
+                    while (!secp256k1.SecretKeyVerify(privateKey));
                 }
                 var publickKey = new byte[64];
-                if(!secp256k1.PublicKeyCreate(publickKey, privateKey))
+                if (!secp256k1.PublicKeyCreate(publickKey, privateKey))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Error creating a key!");

@@ -2,12 +2,7 @@
 using BlockChain_PoC.Crypto;
 using BlockChain_PoC.Interfaces;
 using Secp256k1Net;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlockChain_PoC.Base
 {
@@ -85,16 +80,16 @@ namespace BlockChain_PoC.Base
                 throw new InvalidOperationException("You have no permission for this operation!");
             }
             this.hash = GetHash();
-            using(var secp256k1 = new Secp256k1())
+            using (var secp256k1 = new Secp256k1())
             {
                 secp256k1.Sign(signature, Hash, keyPair.PrivateKey);
             }
         }
         public byte[] GetHash()
         {
-            using(var sha256 = SHA256.Create())
+            using (var sha256 = SHA256.Create())
             {
-                using(MemoryStream ms = new MemoryStream())
+                using (MemoryStream ms = new MemoryStream())
                 {
                     ms.Write(Content);
                     ms.Write(From);

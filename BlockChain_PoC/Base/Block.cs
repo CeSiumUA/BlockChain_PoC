@@ -1,18 +1,14 @@
 ﻿using BlockChain_PoC.Interfaces;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BlockChain_PoC.Base
 {
     public record Block : IHashable
     {
         public int Difficulty { get; private set; }
-        public long Id { get; init;}
+        public long Id { get; init; }
         public DateTime TimeStamp { get; init; } = DateTime.Now;
         public List<ITransaction> Transactions { get; init; } = new List<ITransaction>();
         public bool IsMined
@@ -57,7 +53,7 @@ namespace BlockChain_PoC.Base
         }
         public void MineBlock()
         {
-            using(RandomNumberGenerator rng = RandomNumberGenerator.Create())
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
                 long tries = 0;
                 do
@@ -79,7 +75,7 @@ namespace BlockChain_PoC.Base
         {
             using (var sha256 = SHA256.Create())
             {
-                using(MemoryStream ms = new MemoryStream())
+                using (MemoryStream ms = new MemoryStream())
                 {
                     ms.Write(Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(this.Transactions)));
                     ms.Write(this.Nonce);

@@ -1,13 +1,8 @@
-﻿using Autofac;
-using BlockChain_PoC.Base;
+﻿using BlockChain_PoC.Base;
 using BlockChain_PoC.Crypto;
 using BlockChain_PoC.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace BlockChain_PoC
 {
@@ -63,7 +58,7 @@ namespace BlockChain_PoC
             {
                 messageTransaction.SignTransaction(_keyPair);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _userIO.SendUserTextOutput(ex.ToString());
             }

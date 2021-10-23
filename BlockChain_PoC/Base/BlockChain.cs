@@ -3,13 +3,8 @@ using BlockChain_PoC.Core.Commands;
 using BlockChain_PoC.Core.Exceptions;
 using BlockChain_PoC.Core.Models.Dto;
 using BlockChain_PoC.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlockChain_PoC.Base
 {
@@ -88,7 +83,7 @@ namespace BlockChain_PoC.Base
 
         public void AddPendingTransactions(IEnumerable<ITransaction> transactions)
         {
-            foreach(var transaction in transactions)
+            foreach (var transaction in transactions)
             {
                 AddPendingTransaction(transaction);
             }
