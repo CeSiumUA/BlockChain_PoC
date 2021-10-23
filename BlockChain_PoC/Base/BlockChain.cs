@@ -143,5 +143,37 @@ namespace BlockChain_PoC.Base
             };
             _network.Broadcast(addBlockCommand);
         }
+
+        public IEnumerable<Block> GetBlocksFromId(long id)
+        {
+            var block = this.Blocks.FirstOrDefault(x => x.Id == id);
+            if(block == null)
+            {
+                throw new IndexNotFoundException(id);
+            }
+            var blockIndex = this.Blocks.IndexOf(block);
+            var blocksBatch = this.Blocks.Skip(blockIndex + 1);
+            if (!blocksBatch.IsChainValid())
+            {
+                throw new InvalidChainException();
+            }
+            return blocksBatch;
+        }
+
+        public IEnumerable<Block> GetBlocksFromHash(byte[] hash)
+        {
+            var block = this.Blocks.FirstOrDefault(x => Enumerable.SequenceEqual<byte>(hash, x.Hash));
+            if (block == null)
+            {
+                throw new HashNotFoundException(hash);
+            }
+            var blockIndex = this.Blocks.IndexOf(block);
+            var blocksBatch = this.Blocks.Skip(blockIndex + 1);
+            if (!blocksBatch.IsChainValid())
+            {
+                throw new InvalidChainException();
+            }
+            return blocksBatch;
+        }
     }
 }

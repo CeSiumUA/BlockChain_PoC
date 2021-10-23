@@ -35,5 +35,24 @@ namespace BlockChain_PoC.Core
             }
             return true;
         }
+        public static IEnumerable<Block> SelectMoreDifficultChain(this IEnumerable<Block> blocks1, IEnumerable<Block> blocks2)
+        {
+            double blocks1Difficulty = blocks1.Select(x => Math.Pow(2, x.Difficulty)).Sum();
+            double blocks2Difficulty = blocks2.Select(x => Math.Pow(2, x.Difficulty)).Sum();
+
+            if(blocks2Difficulty > blocks1Difficulty)
+            {
+                return blocks2;
+            }
+            else
+            {
+                return blocks1;
+            }
+        }
+        public static IEnumerable<Block> MergeChain(this IEnumerable<Block> blocks1, IEnumerable<Block> blocks2)
+        {
+            //TODO
+            return blocks1;
+        }
     }
 }
