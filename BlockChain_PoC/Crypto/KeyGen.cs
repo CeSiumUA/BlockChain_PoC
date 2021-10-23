@@ -39,7 +39,7 @@ namespace BlockChain_PoC.Crypto
                 };
             }
         }
-        public static KeyPair LoadKey(string path = null, bool createIfNotExists = false)
+        public static KeyPair LoadKey(string? path = null, bool createIfNotExists = false)
         {
             path = path ?? "key.dat";
             if (!File.Exists(path) && !createIfNotExists)

@@ -16,7 +16,7 @@ namespace BlockChain_PoC.Core
         {
             var json = await File.ReadAllTextAsync($"{Environment.CurrentDirectory}/{fileName}");
             var networkMembers = JsonSerializer.Deserialize<NetworkMember[]>(json);
-            return networkMembers;
+            return networkMembers ?? new NetworkMember[0];
         }
     }
 }
