@@ -30,7 +30,7 @@ namespace BlockChain_PoC.Base
         {
             get
             {
-                return nonce;
+                return nonce ?? new byte[0];
             }
             init
             {
@@ -41,14 +41,14 @@ namespace BlockChain_PoC.Base
         {
             get
             {
-                return hash;
+                return hash ?? new byte[0];
             }
             init
             {
                 hash = value;
             }
         }
-        public Block(IEnumerable<ITransaction> transactions, long id, byte[] previousHash, int difficulty = 3)
+        public Block(IEnumerable<ITransaction> transactions, long id, byte[]? previousHash, int difficulty = 3)
         {
             this.Transactions = transactions.ToList();
             this.Id = id;
@@ -72,9 +72,9 @@ namespace BlockChain_PoC.Base
             this.hash = GetHash();
         }
         public byte[] PreviousHash { get; init; }
-        private byte[] nonce { get; set; }
+        private byte[]? nonce { get; set; }
         private bool isMinded { get; set; } = false;
-        private byte[] hash { get; set; }
+        private byte[]? hash { get; set; }
         public byte[] GetHash()
         {
             using (var sha256 = SHA256.Create())

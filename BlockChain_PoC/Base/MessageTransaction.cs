@@ -36,7 +36,7 @@ namespace BlockChain_PoC.Base
         {
             get
             {
-                return hash;
+                return hash ?? new byte[0];
             }
             init
             {
@@ -106,6 +106,6 @@ namespace BlockChain_PoC.Base
             }
         }
         private byte[] signature { get; set; } = new byte[64];
-        private byte[] hash { get; set; }
+        private byte[]? hash { get; set; }
     }
 }

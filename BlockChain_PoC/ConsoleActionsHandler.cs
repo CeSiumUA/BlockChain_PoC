@@ -38,7 +38,7 @@ namespace BlockChain_PoC
             switch (regexGroups[1].Value)
             {
                 case "addtransaction":
-                    HandleAddTransactionCommand(regexGroups[2].Value);
+                    await HandleAddTransactionCommand(regexGroups[2].Value);
                     break;
                 default:
                     Console.WriteLine("Unknown command!");
@@ -50,10 +50,10 @@ namespace BlockChain_PoC
         {
             #region Parameter parser
             var fromPattern = new Regex(@"(-f|--from) (\S*)");
-            var from = fromPattern.Match(arguments).Groups.Values.LastOrDefault().Value;
+            var from = fromPattern.Match(arguments).Groups.Values.LastOrDefault()?.Value ?? string.Empty;
 
             var toPattern = new Regex(@"(-t|--to) (\S*)");
-            var to = toPattern.Match(arguments).Groups.Values.LastOrDefault().Value;
+            var to = toPattern.Match(arguments).Groups.Values.LastOrDefault()?.Value ?? string.Empty;
 
             var messagePattern = new Regex("(-m|--message) (\"|')(.*)(\"|')");
             var message = messagePattern.Match(arguments).Groups[3].Value;

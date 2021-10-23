@@ -15,7 +15,7 @@ namespace BlockChain_PoC.Network
     public class PeerClient : INetworkInterface
     {
         private TcpListener _listener;
-        private Task listeningTask;
+        private Task? listeningTask;
         private ObservableCollection<TcpClient> _clients = new ObservableCollection<TcpClient>();
         private IDataParser _parser;
         private IPeerProvider _peerProvider;
@@ -45,6 +45,7 @@ namespace BlockChain_PoC.Network
                 client.Close();
                 client.Dispose();
             }
+            listeningTask?.Dispose();
         }
 
         public async Task Init()
@@ -56,11 +57,11 @@ namespace BlockChain_PoC.Network
                 {
                     var client = await _listener.AcceptTcpClientAsync();
                     var clientEndpoint = client.Client.RemoteEndPoint as IPEndPoint;
-                    _userIO.SendUserTextOutput($"Client {clientEndpoint.Address}:{clientEndpoint.Port} connected!");
+                    _userIO.SendUserTextOutput($"Client {clientEndpoint?.Address}:{clientEndpoint?.Port} connected!");
                     var existingClient = _clients.FirstOrDefault(x =>
                     {
                         var endPoint = (x.Client.RemoteEndPoint as IPEndPoint);
-                        if(endPoint.Address.ToString() == clientEndpoint.Address.ToString() && endPoint.Port == clientEndpoint.Port)
+                        if(endPoint?.Address.ToString() == clientEndpoint?.Address.ToString() && endPoint?.Port == clientEndpoint?.Port)
                         {
                             return true;
                         }
@@ -94,7 +95,8 @@ namespace BlockChain_PoC.Network
                                 catch (Exception ex)
                                 {
                                     _clients.Remove(client);
-                                    _userIO.SendUserTextOutput($"Client {clientEndpoint.Address}:{clientEndpoint.Port} disconnected!");
+                                    _userIO.LogException(ex.ToString());
+                                    _userIO.SendUserTextOutput($"Client {clientEndpoint?.Address}:{clientEndpoint?.Port} disconnected!");
                                     return;
                                 }
                             }
@@ -108,8 +110,11 @@ namespace BlockChain_PoC.Network
                                 var transferBytes = data.ToArray();
                                 var commnadType = await _parser.GetCommandType(transferBytes);
                                 var command = await _parser.Parse(transferBytes, commnadType);
-                                var result = await _mediator.Send(command);
-                                await ProcessCommandResult(result, WriteResponse);
+                                if (command != null)
+                                {
+                                    var result = await _mediator.Send(command);
+                                    await ProcessCommandResult(result, WriteResponse);
+                                }
                             }
                         }
                     });
@@ -134,7 +139,7 @@ namespace BlockChain_PoC.Network
                      {
                          var existingEndPoint = (x.Client.RemoteEndPoint as IPEndPoint);
                          var usedEndPoint = tcpClient.Client.RemoteEndPoint as IPEndPoint;
-                         return existingEndPoint.Address == usedEndPoint.Address && existingEndPoint.Port == usedEndPoint.Port;
+                         return existingEndPoint?.Address == usedEndPoint?.Address && existingEndPoint?.Port == usedEndPoint?.Port;
                      }))
                     {
                         _clients.Add(tcpClient);
@@ -143,6 +148,7 @@ namespace BlockChain_PoC.Network
                 }
                 catch(Exception ex)
                 {
+                    _userIO.LogException(ex.ToString());
                     _userIO.SendUserTextOutput($"Failed to connect to {peer.IPAddress}:{peer.Port}");
                 }
             }
@@ -161,7 +167,7 @@ namespace BlockChain_PoC.Network
             var serializedBytes = Encoding.UTF8.GetBytes(serialized);
             await Broadcast(serializedBytes);
         }
-        private async Task ProcessCommandResult(object result, Action<byte[]> responseWriteCallback)
+        private async Task ProcessCommandResult(object? result, Action<byte[]> responseWriteCallback)
         {
 
         }

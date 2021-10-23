@@ -10,5 +10,6 @@ namespace BlockChain_PoC.Interfaces
     {
         public string GetUserTextInput();
         public void SendUserTextOutput(string text);
+        public void LogException(string message);
     }
 }

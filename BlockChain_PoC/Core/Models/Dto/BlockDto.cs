@@ -13,18 +13,18 @@ namespace BlockChain_PoC.Core.Models.Dto
         public long Id { get; init; }
         public DateTime TimeStamp { get;init; } = DateTime.Now;
         public bool IsMined { get; init; }
-        public byte[] Nonce { get; init; }
-        public byte[] Hash { get; init; }
-        public byte[] PreviousHash { get; init; }
+        public byte[]? Nonce { get; init; }
+        public byte[]? Hash { get; init; }
+        public byte[]? PreviousHash { get; init; }
         public List<TransactionDto> Transactions { get; init; } = new List<TransactionDto>();
         public Block ConvertToBlock()
         {
             var block = new Block(Transactions.Select(x => x.ConvertToTransaction()), Id, PreviousHash, Difficulty)
             {
                 TimeStamp = TimeStamp,
-                Hash = Hash,
+                Hash = Hash ?? new byte[0],
                 IsMined = IsMined,
-                Nonce = Nonce,
+                Nonce = Nonce ?? new byte[0],
             };
             return block;
         }

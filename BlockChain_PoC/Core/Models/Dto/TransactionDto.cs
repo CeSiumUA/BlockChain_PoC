@@ -13,29 +13,36 @@ namespace BlockChain_PoC.Core.Models.Dto
     {
         public Guid Id { get; init; }
 
-        public byte[] From { get; init; }
+        public byte[] From { get; init; } = new byte[0];
 
-        public byte[] To { get; init; }
+        public byte[] To { get; init; } = new byte[0];
 
-        public byte[] Hash { get; init; }
+        public byte[] Hash { get; init; } = new byte[0];
 
-        public byte[] Signature { get; init; }
+        public byte[] Signature { get; init; } = new byte[0];
 
-        public byte[] MessageContent { get;init; }
+        public byte[] MessageContent { get; init; } = new byte[0];
 
         public TransactionType TransactionType { get; init; }
         public ITransaction ConvertToTransaction()
         {
-            if (TransactionType == TransactionType.Message)
+            switch (TransactionType)
             {
-                return new MessageTransaction(From, To, MessageContent)
-                {
-                    Id = Id,
-                    Hash = Hash,
-                    Signature = Signature,
-                };
+                case TransactionType.Message:
+                    return new MessageTransaction(From, To, MessageContent)
+                    {
+                        Id = Id,
+                        Hash = Hash,
+                        Signature = Signature,
+                    };
+                default:
+                    return new MessageTransaction(From, To, MessageContent)
+                    {
+                        Id = Id,
+                        Hash = Hash,
+                        Signature = Signature,
+                    };
             }
-            return null;
         }
         public static TransactionDto ConvertFromTransaction(ITransaction transaction)
         {

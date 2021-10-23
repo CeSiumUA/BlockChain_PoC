@@ -15,20 +15,21 @@ namespace BlockChain_PoC.Parsers
         {
             var jsonString = Encoding.UTF8.GetString(data);
             var commnandType = System.Text.Json.JsonSerializer.Deserialize<BaseCommand>(jsonString);
-            var type = DataTransferObject.TypeToDto[commnandType.Type];
+            var dtoType = commnandType?.Type ?? DataTransferObjectType.AddBlock; 
+            var type = DataTransferObject.TypeToDto[dtoType];
             return type;
         }
 
-        public async Task<BaseCommand> Parse<T>(byte[] data)
+        public async Task<BaseCommand?> Parse<T>(byte[] data)
         {
             return await Parse(data, typeof(T));
         }
 
-        public async Task<BaseCommand> Parse(byte[] data, Type type)
+        public async Task<BaseCommand?> Parse(byte[] data, Type type)
         {
             var jsonString = Encoding.UTF8.GetString(data);
 
-            var commandToExecute = (BaseCommand)System.Text.Json.JsonSerializer.Deserialize(jsonString, type);
+            var commandToExecute = (BaseCommand?)System.Text.Json.JsonSerializer.Deserialize(jsonString, type);
             return commandToExecute;
         }
     }

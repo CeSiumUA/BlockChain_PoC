@@ -10,7 +10,8 @@ namespace BlockChain_PoC.Core
 {
     public enum DataTransferObjectType
     {
-        AddBlock
+        AddBlock,
+        Other
     }
     public class DataTransferObject
     {
