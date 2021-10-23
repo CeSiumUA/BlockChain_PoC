@@ -10,12 +10,16 @@ namespace BlockChain_PoC.Core.Storage
         private const string storageFileName = "blocks.json";
         public async Task<IEnumerable<Block>> LoadBlocks()
         {
-            using (StreamReader sr = new StreamReader(storageFileName))
+            if (File.Exists(storageFileName))
             {
-                var json = await sr.ReadToEndAsync();
-                var dtoList = JsonSerializer.Deserialize<BlockDto[]>(json);
-                return dtoList?.Select(x => x.ConvertToBlock()) ?? new List<Block>();
+                using (StreamReader sr = new StreamReader(storageFileName))
+                {
+                    var json = await sr.ReadToEndAsync();
+                    var dtoList = JsonSerializer.Deserialize<BlockDto[]>(json);
+                    return dtoList?.Select(x => x.ConvertToBlock()) ?? new List<Block>();
+                }
             }
+            return new List<Block>();
         }
 
         public async Task SaveBlocks(IEnumerable<Block> blocks, bool append = false)
