@@ -18,7 +18,7 @@ namespace BlockChain_PoC.Core
 
         public void SendUserTextOutput(string text)
         {
-            Console.Write(string.IsNullOrEmpty(text) ? string.Empty : $"{Environment.NewLine}{text}");
+            Console.Write(string.IsNullOrEmpty(text) ? string.Empty : $"{text}{Environment.NewLine}");
         }
     }
 }
