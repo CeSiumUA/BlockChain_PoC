@@ -125,7 +125,7 @@ namespace BlockChain_PoC.Base
         {
             var addBlockCommand = new AddBlockCommand()
             {
-                AddedBlock = AddedBlockDto.ConvertToDto(block),
+                AddedBlock = BlockDto.ConvertToDto(block),
             };
             _network.Broadcast(addBlockCommand);
         }

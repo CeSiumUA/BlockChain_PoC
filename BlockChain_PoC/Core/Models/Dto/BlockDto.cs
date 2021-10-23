@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BlockChain_PoC.Core.Models.Dto
 {
-    public record AddedBlockDto : BaseDto
+    public record BlockDto : BaseDto
     {
         public int Difficulty { get; init; }
         public long Id { get; init; }
@@ -17,7 +17,6 @@ namespace BlockChain_PoC.Core.Models.Dto
         public byte[] Hash { get; init; }
         public byte[] PreviousHash { get; init; }
         public List<TransactionDto> Transactions { get; init; } = new List<TransactionDto>();
-        public override DataTransferObjectType Type => DataTransferObjectType.AddBlock;
         public Block ConvertToBlock()
         {
             var block = new Block(Transactions.Select(x => x.ConvertToTransaction()), Id, PreviousHash, Difficulty)
@@ -29,9 +28,9 @@ namespace BlockChain_PoC.Core.Models.Dto
             };
             return block;
         }
-        public static AddedBlockDto ConvertToDto(Block block)
+        public static BlockDto ConvertToDto(Block block)
         {
-            return new AddedBlockDto()
+            return new BlockDto()
             {
                 Difficulty = block.Difficulty,
                 Id = block.Id,

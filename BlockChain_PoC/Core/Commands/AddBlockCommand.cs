@@ -13,7 +13,7 @@ namespace BlockChain_PoC.Core.Commands
     public class AddBlockCommand : BaseCommand, IRequest<Block>
     {
         public override DataTransferObjectType Type => DataTransferObjectType.AddBlock;
-        public AddedBlockDto AddedBlock { get; set; }
+        public BlockDto AddedBlock { get; set; }
     }
     public class AddBlockCommandHanlder : IRequestHandler<AddBlockCommand, Block>
     {

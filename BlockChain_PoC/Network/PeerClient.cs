@@ -3,6 +3,7 @@ using BlockChain_PoC.Parsers;
 using MediatR;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -15,17 +16,25 @@ namespace BlockChain_PoC.Network
     {
         private TcpListener _listener;
         private Task listeningTask;
-        private List<TcpClient> _clients = new List<TcpClient>();
+        private ObservableCollection<TcpClient> _clients = new ObservableCollection<TcpClient>();
         private IDataParser _parser;
         private IPeerProvider _peerProvider;
         private readonly IMediator _mediator;
+        private readonly IUserIO _userIO;
 
-        public PeerClient(IDataParser dataParser, IPeerProvider peerProvider, IMediator mediator)
+        public PeerClient(IDataParser dataParser, IPeerProvider peerProvider, IMediator mediator, IUserIO userIO)
         {
             _listener = new TcpListener(IPAddress.Any, 4956);
             _parser = dataParser;
             _peerProvider = peerProvider;
             _mediator = mediator;
+            _userIO = userIO;
+            _clients.CollectionChanged += ClientsCollectionChanged;
+        }
+
+        private void ClientsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            _userIO.SendUserTextOutput($"Connected peers: {_clients.Count}");
         }
 
         public void Dispose()
@@ -47,7 +56,7 @@ namespace BlockChain_PoC.Network
                 {
                     var client = await _listener.AcceptTcpClientAsync();
                     var clientEndpoint = client.Client.RemoteEndPoint as IPEndPoint;
-                    Console.WriteLine($"Client {clientEndpoint.Address}:{clientEndpoint.Port} connected!");
+                    _userIO.SendUserTextOutput($"Client {clientEndpoint.Address}:{clientEndpoint.Port} connected!");
                     var existingClient = _clients.FirstOrDefault(x =>
                     {
                         var endPoint = (x.Client.RemoteEndPoint as IPEndPoint);
@@ -85,7 +94,7 @@ namespace BlockChain_PoC.Network
                                 catch (Exception ex)
                                 {
                                     _clients.Remove(client);
-                                    Console.WriteLine($"Client {clientEndpoint.Address}:{clientEndpoint.Port} disconnected!");
+                                    _userIO.SendUserTextOutput($"Client {clientEndpoint.Address}:{clientEndpoint.Port} disconnected!");
                                     return;
                                 }
                             }
@@ -113,13 +122,13 @@ namespace BlockChain_PoC.Network
         private async Task LoadPeers()
         {
             var peers = await _peerProvider.GetPeersAsync();
-            Console.WriteLine($"Connecting to {peers.Count()} peers");
+            _userIO.SendUserTextOutput($"Connecting to {peers.Count()} peers");
             foreach(var peer in peers)
             {
                 TcpClient tcpClient = new TcpClient();
                 try
                 {
-                    Console.WriteLine($"Connecting to {peer.IPAddress}:{peer.Port}!");
+                    _userIO.SendUserTextOutput($"Connecting to {peer.IPAddress}:{peer.Port}!");
                     await tcpClient.ConnectAsync(peer.IPAddress, peer.Port);
                     if (!_clients.Any(x =>
                      {
@@ -130,11 +139,11 @@ namespace BlockChain_PoC.Network
                     {
                         _clients.Add(tcpClient);
                     }
-                    Console.WriteLine($"Connected to {peer.IPAddress}:{peer.Port}!");
+                    _userIO.SendUserTextOutput($"Connected to {peer.IPAddress}:{peer.Port}!");
                 }
                 catch(Exception ex)
                 {
-                    Console.WriteLine($"Failed to connect to {peer.IPAddress}:{peer.Port}");
+                    _userIO.SendUserTextOutput($"Failed to connect to {peer.IPAddress}:{peer.Port}");
                 }
             }
         }

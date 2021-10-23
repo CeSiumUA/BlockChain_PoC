@@ -26,12 +26,16 @@ namespace BlockChain_PoC.Core.Models.Dto
         public TransactionType TransactionType { get; init; }
         public ITransaction ConvertToTransaction()
         {
-            return new MessageTransaction(From, To, MessageContent)
+            if (TransactionType == TransactionType.Message)
             {
-                Id = Id,
-                Hash = Hash,
-                Signature = Signature,
-            };
+                return new MessageTransaction(From, To, MessageContent)
+                {
+                    Id = Id,
+                    Hash = Hash,
+                    Signature = Signature,
+                };
+            }
+            return null;
         }
         public static TransactionDto ConvertFromTransaction(ITransaction transaction)
         {

@@ -8,6 +8,5 @@ namespace BlockChain_PoC.Core.Models.Dto
 {
     public record BaseDto
     {
-        public virtual DataTransferObjectType Type { get; }
     }
 }
