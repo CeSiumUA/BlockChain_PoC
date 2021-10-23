@@ -24,12 +24,13 @@ namespace BlockChain_PoC.Base
         {
             _network = networkInterface;
             _blockChainStorage = blockChainStorage;
+            Blocks = new ObservableCollection<Block>(_blockChainStorage.LoadBlocks().Result);
             Blocks.CollectionChanged += HandleBlocksCollectionChanged;
         }
 
         private void HandleBlocksCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            throw new NotImplementedException();
+            _blockChainStorage.SaveBlocks(this.Blocks);
         }
         #region AddGetBlock
         public Block? GetLatestBlock()
