@@ -2,6 +2,7 @@
 using BlockChain_PoC;
 using BlockChain_PoC.Base;
 using BlockChain_PoC.Core;
+using BlockChain_PoC.Core.Storage;
 using BlockChain_PoC.Crypto;
 using BlockChain_PoC.Interfaces;
 using BlockChain_PoC.Network;
@@ -25,7 +26,7 @@ builder.RegisterMediatR(Assembly.GetExecutingAssembly());
 
 builder.RegisterType<ConsoleUserIO>().As<IUserIO>().SingleInstance();
 
-builder.RegisterType<TextFilePeerProvider>().As<IBlockChainStorage>().SingleInstance();
+builder.RegisterType<TextFileStorage>().As<IBlockChainStorage>().SingleInstance();
 
 var keyPair = KeyGen.LoadKey(createIfNotExists: true);
 
