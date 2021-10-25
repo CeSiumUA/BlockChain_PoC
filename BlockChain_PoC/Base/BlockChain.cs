@@ -144,7 +144,7 @@ namespace BlockChain_PoC.Base
             _network.Broadcast(addBlockCommand);
         }
 
-        public IEnumerable<Block> GetBlocksFromId(long id)
+        public IEnumerable<Block> GetBlocksFromId(long id, bool isInclusive = true)
         {
             var block = this.Blocks.FirstOrDefault(x => x.Id == id);
             if(block == null)
@@ -160,7 +160,7 @@ namespace BlockChain_PoC.Base
             return blocksBatch;
         }
 
-        public IEnumerable<Block> GetBlocksFromHash(byte[] hash)
+        public IEnumerable<Block> GetBlocksFromHash(byte[] hash, bool isInclusive = true)
         {
             var block = this.Blocks.FirstOrDefault(x => Enumerable.SequenceEqual<byte>(hash, x.Hash));
             if (block == null)

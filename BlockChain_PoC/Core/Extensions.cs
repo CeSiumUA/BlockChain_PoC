@@ -1,4 +1,5 @@
 ﻿using BlockChain_PoC.Base;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BlockChain_PoC.Core
 {
@@ -51,8 +52,29 @@ namespace BlockChain_PoC.Core
         }
         public static IEnumerable<Block> MergeChain(this IEnumerable<Block> blocks1, IEnumerable<Block> blocks2)
         {
-            //TODO
+            Block? innerIntersection = null;
+            var firstCommonBlock = blocks1.Intersect(blocks2, new BlocksEqualityComparer()).FirstOrDefault();
+            if(firstCommonBlock == null)
+            {
+                //TODO Add merging alghoritm
+            }
             return blocks1;
+        }
+    }
+    public class BlocksEqualityComparer : IEqualityComparer<Block>
+    {
+        public bool Equals(Block? x, Block? y)
+        {
+            if(x != null && y != null)
+            {
+                return x.Id == y.Id && Enumerable.SequenceEqual(x.Hash, y.Hash);
+            }
+            return x == y;
+        }
+
+        public int GetHashCode([DisallowNull] Block obj)
+        {
+            return obj.GetHashCode();
         }
     }
 }
