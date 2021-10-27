@@ -1,4 +1,5 @@
 ﻿using BlockChain_PoC.Base;
+using System.Runtime;
 using System.Diagnostics.CodeAnalysis;
 
 namespace BlockChain_PoC.Core
@@ -53,11 +54,52 @@ namespace BlockChain_PoC.Core
         public static IEnumerable<Block> MergeChain(this IEnumerable<Block> blocks1, IEnumerable<Block> blocks2)
         {
             Block? innerIntersection = null;
-            var firstCommonBlock = blocks1.Intersect(blocks2, new BlocksEqualityComparer()).FirstOrDefault();
+            var blockComparer = new BlocksEqualityComparer();
+            var firstCommonBlock = blocks1.Intersect(blocks2, blockComparer).FirstOrDefault();
             if(firstCommonBlock == null)
             {
-                //TODO Add merging alghoritm
+                if(Enumerable.SequenceEqual(blocks2.First().PreviousHash, blocks1.Last().Hash))
+                {
+                    var blocksList = new List<Block>();
+                    foreach(var block in blocks1)
+                    {
+                        blocksList.Add(block);
+                    }
+                    foreach(var block in blocks2)
+                    {
+                        blocksList.Add(block);
+                    }
+                    return blocksList;
+                }
+                else if(Enumerable.SequenceEqual(blocks2.Last().Hash, blocks1.First().PreviousHash))
+                {
+                    var blocksList = new List<Block>();
+                    foreach (var block in blocks2)
+                    {
+                        blocksList.Add(block);
+                    }
+                    foreach (var block in blocks1)
+                    {
+                        blocksList.Add(block);
+                    }
+                    return blocksList;
+                }
             }
+
+            var blocks1Index = Array.IndexOf(blocks1.ToArray(), firstCommonBlock);
+            var blocks2Index = Array.IndexOf(blocks2.ToArray(), firstCommonBlock);
+            
+            if(blocks1Index == -1 || blocks2Index == -1)
+            {
+                throw new Exception("Unknown strange error!");
+            }
+
+            var difficultChain = SelectMoreDifficultChain(blocks1.Skip(blocks1Index), blocks2.Skip(blocks2Index));
+
+            //TODO
+
+            var str = File.ReadAllText("tttt");
+
             return blocks1;
         }
     }

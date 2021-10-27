@@ -1,4 +1,6 @@
-﻿using Xunit;
+﻿using BlockChain_PoC.Network;
+using System.Net;
+using Xunit;
 
 namespace BlockChain_PoC_Tests
 {
