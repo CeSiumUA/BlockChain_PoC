@@ -98,8 +98,6 @@ namespace BlockChain_PoC.Core
 
             //TODO
 
-            var str = File.ReadAllText("tttt");
-
             return blocks1;
         }
     }
