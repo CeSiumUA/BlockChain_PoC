@@ -37,10 +37,14 @@ namespace BlockChain_PoC.Core
             }
             return true;
         }
+        public static double GetChainDifficulty(this IEnumerable<Block> blocks)
+        {
+            return blocks.Select(x => Math.Pow(2, x.Difficulty)).Sum();
+        }
         public static IEnumerable<Block> SelectMoreDifficultChain(this IEnumerable<Block> blocks1, IEnumerable<Block> blocks2)
         {
-            double blocks1Difficulty = blocks1.Select(x => Math.Pow(2, x.Difficulty)).Sum();
-            double blocks2Difficulty = blocks2.Select(x => Math.Pow(2, x.Difficulty)).Sum();
+            double blocks1Difficulty = blocks1.GetChainDifficulty();
+            double blocks2Difficulty = blocks2.GetChainDifficulty();
 
             if(blocks2Difficulty > blocks1Difficulty)
             {
@@ -84,6 +88,7 @@ namespace BlockChain_PoC.Core
                     }
                     return blocksList;
                 }
+                return blocks1.SelectMoreDifficultChain(blocks2);
             }
 
             var blocks1Index = Array.IndexOf(blocks1.ToArray(), firstCommonBlock);
@@ -96,7 +101,22 @@ namespace BlockChain_PoC.Core
 
             var difficultChain = SelectMoreDifficultChain(blocks1.Skip(blocks1Index), blocks2.Skip(blocks2Index));
 
-            //TODO
+            var chain1Remnant = blocks1.Skip(blocks1Index);
+            var chain2Remnant = blocks2.Skip(blocks2Index);
+
+            if(chain1Remnant.GetChainDifficulty() >= chain2Remnant.GetChainDifficulty())
+            {
+                return blocks1;
+            }
+            else
+            {
+                blocks1 = blocks1.Take(blocks1Index);
+                foreach(var blck in chain2Remnant)
+                {
+                    blocks1.Append(blck);
+                }
+                return blocks1;
+            }
 
             return blocks1;
         }
