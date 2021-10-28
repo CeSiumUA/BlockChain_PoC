@@ -116,8 +116,6 @@ namespace BlockChain_PoC.Core
                 }
                 return blocks1;
             }
-
-            return blocks1;
         }
     }
     public class BlocksEqualityComparer : IEqualityComparer<Block>
