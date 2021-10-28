@@ -57,7 +57,6 @@ namespace BlockChain_PoC.Core
         }
         public static IEnumerable<Block> MergeChain(this IEnumerable<Block> blocks1, IEnumerable<Block> blocks2)
         {
-            Block? innerIntersection = null;
             var blockComparer = new BlocksEqualityComparer();
             var firstCommonBlock = blocks1.Intersect(blocks2, blockComparer).FirstOrDefault();
             if(firstCommonBlock == null)
