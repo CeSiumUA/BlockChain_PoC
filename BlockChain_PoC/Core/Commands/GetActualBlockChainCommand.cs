@@ -14,9 +14,9 @@ namespace BlockChain_PoC.Core.Commands
     public class GetBlockChainCommand : BaseCommand, IRequest<GetBlockChainResult>
     {
         public override DataTransferObjectType Type => DataTransferObjectType.GetBlockChain;
-        public byte[]? lastBlockHash { get; set; }
+        public byte[]? LastBlockHash { get; set; }
         public long? Id { get; set; }
-        public bool isInclusive = true;
+        public bool IsInclusive = true;
     }
     public class GetBlockChaimCommandHandler : IRequestHandler<GetBlockChainCommand, GetBlockChainResult>
     {
@@ -33,11 +33,11 @@ namespace BlockChain_PoC.Core.Commands
             {
                 if (request.Id.HasValue)
                 {
-                    blockChain = _blockChain.GetBlocksFromId(request.Id.Value, request.isInclusive);
+                    blockChain = _blockChain.GetBlocksFromId(request.Id.Value, request.IsInclusive);
                 }
-                else if (request.lastBlockHash != null && request.lastBlockHash.Length > 0)
+                else if (request.LastBlockHash != null && request.LastBlockHash.Length > 0)
                 {
-                    blockChain = _blockChain.GetBlocksFromHash(request.lastBlockHash, request.isInclusive);
+                    blockChain = _blockChain.GetBlocksFromHash(request.LastBlockHash, request.IsInclusive);
                 }
             }
             catch (Exception ex)

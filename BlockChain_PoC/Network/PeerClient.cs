@@ -167,7 +167,10 @@ namespace BlockChain_PoC.Network
         }
         private async Task ProcessCommandResult(object? result, Stream stream)
         {
-
+            if (result == null) return;
+            var json = System.Text.Json.JsonSerializer.Serialize(result);
+            var serializedBytes = Encoding.UTF8.GetBytes(json);
+            stream.Write(serializedBytes);
         }
     }
 }

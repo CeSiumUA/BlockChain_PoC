@@ -6,6 +6,7 @@ namespace BlockChain_PoC.Core
     {
         AddBlock,
         GetBlockChain,
+        GetBlockChainResult,
         Other
     }
     public class DataTransferObject
@@ -14,6 +15,7 @@ namespace BlockChain_PoC.Core
         {
             {DataTransferObjectType.AddBlock, typeof(AddBlockCommand) },
             {DataTransferObjectType.GetBlockChain, typeof(GetBlockChainCommand) },
+
         };
     }
 }
